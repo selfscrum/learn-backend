@@ -1,10 +1,15 @@
 const express = require('express')
 const app = express()
 
+// JSON parser middleware
+//
+app.use(express.json())
+
 // morgan middleware
 //
 const morgan = require('morgan')
-app.use(morgan('tiny'))
+morgan.token('body', (req, res) => JSON.stringify(req.body) )
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 // generate a unique random id
 //  
@@ -13,10 +18,6 @@ const generateId = () => {
   console.log(`newId: ${newId}`)
   return newId
 }
-
-// JSON parser middleware
-//
-app.use(express.json())
 
 let persons = [  
         { 
@@ -84,7 +85,7 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if (persons.find(person => person.name === body.name)) {
+  if (persons.find(p => p.name === body.name)) {
     return response.status(400).json({ 
       error: 'name must be unique' 
     })
@@ -97,6 +98,7 @@ app.post('/api/persons', (request, response) => {
   }
   
   persons = persons.concat(person)
+  response.json(person)
 })
 
 // unknwon route middleware

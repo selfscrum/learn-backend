@@ -1,0 +1,45 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "otto",
+    "number": "222-222"
+}
+
+### name missing
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "222-222"
+}
+
+### number missing
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "otto"
+}
+
+### empty body
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+}
+
+### additional property
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "otto",
+    "age": 42,
+    "number": "222-222"
+}
+

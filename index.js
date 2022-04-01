@@ -5,6 +5,10 @@ const app = express()
 //
 app.use(express.json())
 
+// Frontend middleware
+//
+app.use(express.static('build'))
+
 // morgan middleware
 //
 const morgan = require('morgan')

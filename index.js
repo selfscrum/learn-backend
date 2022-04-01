@@ -1,6 +1,21 @@
 const express = require('express')
 const app = express()
 
+// morgan middleware
+//
+const morgan = require('morgan')
+app.use(morgan('tiny'))
+
+// generate a unique random id
+//  
+const generateId = () => {
+  const newId = Math.floor(Math.random()*100000)
+  console.log(`newId: ${newId}`)
+  return newId
+}
+
+// JSON parser middleware
+//
 app.use(express.json())
 
 let persons = [  
@@ -84,15 +99,12 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
 })
 
-// generate a unique random id
-//  
-const generateId = () => {
-  const newId = Math.floor(Math.random()*100000)
-  console.log(`newId: ${newId}`)
-  return newId
+// unknwon route middleware
+//
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
 }
-
-
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {

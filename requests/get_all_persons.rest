@@ -1,5 +1,6 @@
 GET http://localhost:3001/api/persons/
 
+GET http://localhost:3001/info
 
 ### update
 PUT http://localhost:3001/api/persons/62588f7dca3549991a45c38d

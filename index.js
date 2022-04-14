@@ -22,6 +22,15 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 const cors = require('cors')
 app.use(cors())
 
+// generate a unique random id
+//  
+const generateId = () => {
+  const newId = Math.floor(Math.random()*100000)
+  console.log(`newId: ${newId}`)
+  return newId
+}
+
+
 app.get('/api/persons/', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)

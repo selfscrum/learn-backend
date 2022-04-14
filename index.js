@@ -79,22 +79,34 @@ app.post('/api/persons', (request, response) => {
       error: 'number missing' 
     })
   }
-/*
-  if (persons.find(p => p.name === body.name)) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
-  }
-*/
+
   const person = new Person({
     name: body.name,
     number: body.number,
     id: generateId()
   })
-  
   person.save().then(savedNote => {
     response.json(savedNote)
   })
+  .catch(error => next(error))
+})
+
+// update a person
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  // only the number can be updated
+  const person = {
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      //Update    
+      console.log('update', person)
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 // unknwon route middleware

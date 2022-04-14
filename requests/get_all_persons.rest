@@ -1,5 +1,16 @@
-GET http://localhost:3001/api/persons
+GET http://localhost:3001/api/persons/
+
+
+### update
+PUT http://localhost:3001/api/persons/62588f7dca3549991a45c38d
+Content-Type: application/json
+
+{
+    "number": "222-98892992"
+}
 
 ###
 
 GET https://lychee-cake-31355.herokuapp.com/api/persons
+
+

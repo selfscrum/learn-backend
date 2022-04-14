@@ -4,39 +4,29 @@ const app = express()
 const Person = require('./models/person')
 
 // JSON parser middleware
-//
 app.use(express.json())
 
 // Frontend middleware
-//
 app.use(express.static('build'))
 
 // morgan middleware
-//
 const morgan = require('morgan')
 morgan.token('body', (req, res) => JSON.stringify(req.body) )
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 // CORS middleware
-//
 const cors = require('cors')
 app.use(cors())
 
 // generate a unique random id
-//  
 const generateId = () => {
   const newId = Math.floor(Math.random()*100000)
   console.log(`newId: ${newId}`)
   return newId
 }
 
-
-app.get('/api/persons/', (request, response) => {
-  Person.find({}).then(persons => {
-    response.json(persons)
-  })
-})
-
+// ROUTES
+// info
 app.get('/info', (request, response) => {
   Person.find({}).then(persons => {
     const people = persons.length
@@ -45,18 +35,37 @@ app.get('/info', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
+
+// all persons
+app.get('/api/persons/', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
   })
 })
 
+// find by id
+app.get('/api/persons/:id', (request, response) => {
+  Person.findById(request.params.id).then(person => {
+    if (person) {        
+      response.json(person)
+    } else {
+      response.status(404).end()      
+    }    
+  })
+  .catch(error => {      
+    console.log(error)      
+    response.status(500).end()    
+  })
+})
+
+// delete a person by id (TBD)
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
 // TBD
   response.status(204).end()  
 })
 
+// create a new person, duplicates allowed
 app.post('/api/persons', (request, response) => {
   const body = request.body
 

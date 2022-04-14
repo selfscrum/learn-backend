@@ -1,6 +1,6 @@
-require('dotenv').config()
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const Person = require('./models/person')
 
 // Frontend middleware
@@ -11,7 +11,7 @@ app.use(express.json())
 
 // morgan middleware
 const morgan = require('morgan')
-morgan.token('body', (req, res) => JSON.stringify(req.body) )
+morgan.token('body', (req) => JSON.stringify(req.body) )
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 // CORS middleware
@@ -45,13 +45,13 @@ app.get('/api/persons/', (request, response) => {
 // find by id
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
-    if (person) {        
+    if (person) {
       response.json(person)
     } else {
-      response.status(404).end()      
-    }    
+      response.status(404).end()
+    }
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 // delete a person by id
@@ -69,14 +69,14 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name) {
-    return response.status(400).json({ 
-      error: 'name missing' 
+    return response.status(400).json({
+      error: 'name missing'
     })
   }
-  
+
   if (!body.number) {
-    return response.status(400).json({ 
-      error: 'number missing' 
+    return response.status(400).json({
+      error: 'number missing'
     })
   }
 
@@ -87,7 +87,7 @@ app.post('/api/persons', (request, response, next) => {
   })
   person.save()
     .then(savedNote => {
-    response.json(savedNote)
+      response.json(savedNote)
     })
     .catch(error => next(error))
 })
@@ -96,8 +96,8 @@ app.post('/api/persons', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
-  Person.findByIdAndUpdate(request.params.id, 
-    { name, number },    
+  Person.findByIdAndUpdate(request.params.id,
+    { name, number },
     { new: true, runValidators: true, context: 'query' }
   )
     .then(updatedPerson => {
@@ -128,6 +128,5 @@ app.use(errorHandler)
 // listen to requests
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
-    

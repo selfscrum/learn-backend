@@ -3,11 +3,11 @@ const mongoose = require('mongoose')
 const url = process.env.MONGODB_URI
 console.log('connecting to', url)
 mongoose.connect(url)
-  .then(result => {    
-      console.log('connected to MongoDB')  
-  })  
-  .catch((error) => {    
-        console.log('error connecting to MongoDB:', error.message)  
+  .then(result => {
+    console.log('connected to MongoDB', result)
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB:', error.message)
   })
 
 const personSchema = new mongoose.Schema({
@@ -15,17 +15,17 @@ const personSchema = new mongoose.Schema({
     type: String,
     minLength: 3,
     unique: true,
-    required: true  
+    required: true
   },
   number: {
-    type: String,    
+    type: String,
     validate: {
       validator: function(v) {
-        return /\d\d\d?-\d{4,}/.test(v);
+        return /\d\d\d?-\d{4,}/.test(v)
       },
       message: props => `${props.value} is not a valid phone number!`
     },
-    required: true  
+    required: true
   }
 })
 

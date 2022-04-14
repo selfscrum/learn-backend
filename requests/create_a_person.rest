@@ -2,8 +2,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "ott,,,.o212",
-    "number": "222-222"
+    "name": "ott,,,xxx.o212",
+    "number": "222-2992"
 }
 
 ### name missing
@@ -42,4 +42,7 @@ Content-Type: application/json
     "age": 42,
     "number": "222-222"
 }
+
+### get all notes
+GET http://localhost:3001/api/persons/
 

@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 
 // JSON parser middleware
 //
@@ -20,62 +22,34 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 const cors = require('cors')
 app.use(cors())
 
-// generate a unique random id
-//  
-const generateId = () => {
-  const newId = Math.floor(Math.random()*100000)
-  console.log(`newId: ${newId}`)
-  return newId
-}
-
-let persons = [  
-        { 
-          "id": 1,
-          "name": "Arto Hellas", 
-          "number": "040-123456"
-        },
-        { 
-          "id": 2,
-          "name": "Ada Lovelace", 
-          "number": "39-44-5323523"
-        },
-        { 
-          "id": 3,
-          "name": "Dan Abramov", 
-          "number": "12-43-234345"
-        },
-        { 
-          "id": 4,
-          "name": "Mary Poppendieck", 
-          "number": "39-23-6423122"
-        }
-    ]
-
-app.get('/api/persons', (request, response) => {
-        response.json(persons)
+app.get('/api/persons/', (request, response) => {
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
-      
+
 app.get('/info', (request, response) => {
-  const people = persons.length
-  const receivedDate = new Date()
-  response.send(`<p>Phonebook has info for ${people} people</p>${receivedDate}<p></p>`)
+  Person.find({}).then(persons => {
+    const people = persons.length
+    const receivedDate = new Date()
+    response.send(`<p>Phonebook has info for ${people} people</p>${receivedDate}<p></p>`)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person)
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  else
-    response.status(404).end()  
-
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
+/*  Person.findById(request.params.id).then(person => {
+
   const person = persons.find(person => person.id === id)
   if (person)
     persons = persons.filter(person => person.id !== id)
+*/
   response.status(204).end()  
 })
 
@@ -93,21 +67,22 @@ app.post('/api/persons', (request, response) => {
       error: 'number missing' 
     })
   }
-
+/*
   if (persons.find(p => p.name === body.name)) {
     return response.status(400).json({ 
       error: 'name must be unique' 
     })
   }
-
-  const person = {
+*/
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  }
+    id: generateId()
+  })
   
-  persons = persons.concat(person)
-  response.json(person)
+  person.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 // unknwon route middleware
@@ -117,7 +92,7 @@ const unknownEndpoint = (request, response) => {
 }
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

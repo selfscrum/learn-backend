@@ -44,5 +44,5 @@ Content-Type: application/json
 }
 
 ### get all notes
-GET http://localhost:3001/api/persons/
+GET http://localhost:3001/api/persons/1
 

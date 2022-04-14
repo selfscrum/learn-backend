@@ -3,11 +3,11 @@ const express = require('express')
 const app = express()
 const Person = require('./models/person')
 
-// JSON parser middleware
-app.use(express.json())
-
 // Frontend middleware
 app.use(express.static('build'))
+
+// JSON parser middleware
+app.use(express.json())
 
 // morgan middleware
 const morgan = require('morgan')
@@ -35,7 +35,6 @@ app.get('/info', (request, response) => {
   })
 })
 
-
 // all persons
 app.get('/api/persons/', (request, response) => {
   Person.find({}).then(persons => {
@@ -44,7 +43,7 @@ app.get('/api/persons/', (request, response) => {
 })
 
 // find by id
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
     if (person) {        
       response.json(person)
@@ -52,17 +51,17 @@ app.get('/api/persons/:id', (request, response) => {
       response.status(404).end()      
     }    
   })
-  .catch(error => {      
-    console.log(error)      
-    response.status(500).end()    
-  })
+  .catch(error => next(error))
 })
 
-// delete a person by id (TBD)
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-// TBD
-  response.status(204).end()  
+// delete a person by id
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      console.log(result)
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 // create a new person, duplicates allowed
@@ -99,12 +98,23 @@ app.post('/api/persons', (request, response) => {
 })
 
 // unknwon route middleware
-//
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
 
+// error middleware
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+  next(error)
+}
+app.use(errorHandler)
+
+// listen to requests
 const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)

@@ -3,11 +3,11 @@ GET http://localhost:3001/api/persons/
 GET http://localhost:3001/info
 
 ### update
-PUT http://localhost:3001/api/persons/62588f7dca3549991a45c38d
+PUT http://localhost:3001/api/persons/62589568821bd482dad207b1
 Content-Type: application/json
 
 {
-    "number": "222-98892992"
+    "number": "221"
 }
 
 ###

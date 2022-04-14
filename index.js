@@ -64,7 +64,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// create a new person, duplicates allowed
+// create a new person
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
